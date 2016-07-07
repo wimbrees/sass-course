@@ -1,0 +1,85 @@
+// IMPORTING PARTIALS
+@import 'partials/variables';
+
+// It's possible to import multiple files like this:
+// @import "_____", "_____";
+
+// NESTING / USING VARIABLES
+body {
+    p:first-child {
+        font-family: Helvetica;
+        color: $text-color;
+        font-size: $big;
+    }
+}
+
+// MIXINS
+@mixin warning {
+    background-color: orange;
+    color: #fff;
+    font-weight: bold;
+}
+
+.warning {
+    @include warning;
+}
+
+@mixin largeText {
+    // SEPARATING PROPERTIES
+    font: {
+        size: 50px;
+        weight: bold;        
+    }
+}
+
+.large-text {
+    @include largeText;
+}
+
+// Including mixins in other mixins
+@mixin outer {
+    color: red;
+}
+
+@mixin inner {
+    font-style: italic;
+    @include outer;
+}
+
+.italic {
+    @include inner;
+}
+
+// Mixins with default parameters
+@mixin rounded($radius: 50%) {
+    border-radius: $radius;
+}
+
+// Parentheses after "rounded" are optional
+.radius {
+    @include rounded();
+}
+
+// Mixin with variable arguments
+@mixin box-shadow($shadows...) {
+    box-shadow: $shadows;
+}
+
+.shadow {
+    @include box-shadow(2px 0px 4px #999, 1px 1px 6px orange, 10px 5px 2px green);
+}
+
+// IMPORTING GOOGLE FONTS
+@mixin google-font($font) {
+    $font: unquote($font);
+    // String interpolation to pass the font to the url
+    @import url("https://fonts.googleapis.com/css?family=#{$font}");
+}
+
+// This will be turned into the correct @import and placed at the top of the CSS file
+@include google-font("Lobster");
+
+.google {
+    font-family: "Lobster";
+    font-size: 3em;
+}
