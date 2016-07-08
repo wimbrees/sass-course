@@ -1,4 +1,5 @@
 // IMPORTING PARTIALS
+// Useful for variables, mixins and functions
 @import 'partials/variables';
 
 // It's possible to import multiple files like this:
@@ -14,6 +15,9 @@ body {
 }
 
 // MIXINS
+// Mixins should only be used with parameters.
+// Otherwise it's better to use @extend (our CSS will end up being less repetitive).
+// CSS minifiers will solve this, though.
 @mixin warning {
     background-color: orange;
     color: #fff;
@@ -82,4 +86,135 @@ body {
 .google {
     font-family: "Lobster";
     font-size: 3em;
+}
+
+// USING MEDIA QUERIES INSIDE SELECTORS (not allowed in CSS)
+.media {
+    @media screen and (max-width: 1000px) {
+        font-size: 5em;
+    }
+}
+
+.another-media {
+    @media screen and (max-width: 1000px) {
+        font-size: 5em;
+    }
+}
+
+// GIVING NAMES TO MEDIA QUERIES
+// If needed, max-width will only have to be changed in one place
+@mixin small-screens() {
+    @media screen and (max-width: 480px) {
+        @content;
+    }
+}
+
+.yet-another-media {
+    @include small-screens {
+        color: red;
+    }
+}
+
+// FUNCTIONS (darken, lighten, opacify, transparentize, ...)
+a {
+    color: red;
+    // & leaves no space (a:hover)
+    &:hover {
+        color: darken(red, 15%);
+    }
+}
+
+// CREATING OUR OWN FUNCTIONS
+// Converting from pixels to ems:
+@function em($pixels, $context: 16px) {
+    @return ($pixels / $context) * 1em;
+}
+
+.fontInEM {
+    font-size: em(24px);
+}
+
+@function strip-unit($value) {
+    // value / 1px OR value / 1em OR ...
+    @return $value / ($value*0 + 1);
+}
+
+// INHERITANCE
+// It's not possible to extend from a nested selector (that is, not a single word) (ex: "body .error")
+// It's not possible to extend from a selector that is placed outside the current media query
+.error {
+    color: red;
+}
+
+.critical-error {
+    @extend .error;
+    background: yellow;
+}
+
+// Creating @extend only selectors (aka placeholders)
+%highlight {
+    font-style: italic;
+}
+
+.highlight {
+    @extend %highlight;
+}
+
+// The !optional flag may be passed to @extend, so as to avoid errors if what has to be extended does not exist.
+.optional-highlight {
+    @extend %highlight !optional;
+}
+
+// IF/ELSE DIRECTIVE
+$greenBold: true;
+
+.green-bold {
+    @if $greenBold == true {
+        color: green;
+        font-weight: bold;
+    } @else if $greenBold == false {
+        color: red;        
+    } @else {
+        color: purple;
+    }
+}
+
+// FOR LOOPS
+@for $i from 1 through 6 {
+    .padding-#{$i} {
+        padding-left: $i * 10px;
+    }
+}
+
+// EACH LOOPS
+// With lists
+$speakers: steph, klay, kevin;
+@each $speaker in $speakers {
+    .#{$speaker} {
+        background-image: url("/images/#{$speaker}.jpg");
+    }
+}
+
+.players > div {
+    height: 300px;
+    width: 300px;
+    display: inline-block
+}
+
+// With maps
+$font-sizes: (tiny: 8px, small: 16px, medium: 24px, large: 32px);
+
+@each $name, $size in $font-sizes {
+    .#{$name} {
+        font-size: $size;
+    }
+}
+
+// WHILE LOOPS
+$j: 1;
+@while $j <= 10 {
+    .item-#{$j} {
+        padding-left: $j * 20px;
+    }
+    $j: $j + 1;
 }

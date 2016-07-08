@@ -26,3 +26,6 @@ module.exports = {
         new ExtractTextPlugin("style.css")
     ]
 };
+
+// $ npm i
+// $ webpack-dev-server OR webpack
